@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 
-import './App.css';
+import './styles/App.css';
 import './routes/DZTablica.js';
 import DZTablica from './routes/DZTablica.js';
 import Navigation from './routes/Navigation';
@@ -13,6 +13,7 @@ import DodajDoktoraSestru from './routes/DodajDok';
 import Statistika from './routes/Statistika';
 import Prijava from './routes/Prijava';
 import DjelatnostiPoGradu from './routes/DjelatnostiPoGradu';
+import DetaljiDomZdravlja from './routes/DetaljiDomZdravlja';
 
 function App() {
 
@@ -80,7 +81,8 @@ console.log(prijavljen);
             <Route path='/stat' element={<Statistika/>} />
             <Route path='/djelatnosti' element={<DpGTablica/>}></Route>
             <Route path='/prijava' element={<Prijava/>} />
-            <Route path='/4zadatak/:grad' element={<DjelatnostiPoGradu/>}>
+            <Route path='/4zadatak/:grad' element={<DjelatnostiPoGradu/>}/>
+            <Route path='/dom_zdravlja/detalji/:domId' element={<DetaljiDomZdravlja/>}>
             </Route>
            </Routes>
         </BrowserRouter>}

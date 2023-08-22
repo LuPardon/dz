@@ -1,14 +1,25 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { Link } from 'react-router-dom';
+import "../styles/dz_tablica.css";
+// import { Accordion, Card, Button } from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 export default function DZTablica() {
     const [data, setData] = useState(null);
+    const [domovi, setDomovi] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         getData();
+        getDomovi();
     }, []);
+    
+    async function getDomovi() {
+        axios.get("http://localhost/KV/dzdb/domovi.php").then((response) => {
+            setDomovi(response.data);
+        });
+    }
 
     async function getData() {
         axios.get("http://localhost/KV/dzdb/domovi.php").then((response) => {
@@ -20,7 +31,6 @@ export default function DZTablica() {
 
     let counter = 1;
 
-    // TABLICA DOMOVA ZDRAVLJA S BROJEM ZAPOSLENIKA PO GRADOVIMA
     const groupedData = groupDataByCity(data);
 
     const filteredData = groupedData.filter((group) => {
@@ -31,15 +41,42 @@ export default function DZTablica() {
         );
     });
 
-    const tableRows = filteredData.map((group) => (
-        <tr key={group.city}>
-            <td>{counter++}</td>
-            <td>{group.city}</td>
-            <td>{group.totalEmployees}</td>
-        </tr>
-    ));
+    const tableRows = filteredData.map((group, index) => {
+        const cityDomovi = domovi.filter(dom => dom.grad ===group.city);
+        return ( 
+            <Fragment  key={group.city}>
+                <tr onClick={() => {
+                    const element = document.getElementById(`collapse-${index}`);
+                    if (element) {
+                        element.classList.toggle('show');
+                    }
+                }}>
+                    <td>{counter++}</td>
+                    <td>{group.city}</td>
+                    <td>
+                        {group.totalEmployees}
+                    </td>
+                </tr>
+                <tr id={`collapse-${index}`} className="collapse">
+                    <td colSpan="3">
+                        {cityDomovi.map(dom => (
+                        //    <button 
+                        //         key={dom.id_domzdravlja} 
+                        //         onClick={() => console.log(dom.naziv)}
+                        //         className="domovi-button"
+                        //     >
+                        //         {dom.naziv}
+                        //     </button>
+                            <Link className="domovi-button" to={`/dom_zdravlja/detalji/${dom.id_domzdravlja}`}>  {dom.naziv}</Link>
+                            
+                        ))}
+                    </td>
+                </tr>
+            </Fragment>
+        );
+    });
+    
 
-    // Funkcija za grupiranje podataka po gradu i zbrajanje zaposlenika
     function groupDataByCity(data) {
         const groupedData = {};
         data.forEach((dom) => {
@@ -55,14 +92,13 @@ export default function DZTablica() {
         return Object.values(groupedData);
     }
 
-    // Renderiranje tablice s filtriranim podacima
     function handleSearch(event) {
         setSearchQuery(event.target.value.toUpperCase());
     }
 
     return (
         <>
-            {/* Tražilica */}
+            {/* Search Input */}
             <input
                 type="text"
                 id="myInput"
@@ -71,7 +107,7 @@ export default function DZTablica() {
                 placeholder="Pretraži..."
             />
 
-            {/* Tablica */}
+            {/* Table */}
             <table className='table table-active'>
                 <thead>
                     <tr>
@@ -79,9 +115,6 @@ export default function DZTablica() {
                         <th>GRAD </th>
                         <th>BROJ ZAPOSLENIKA </th>
                     </tr>
-
-
-                    
                 </thead>
                 <tbody>{tableRows}</tbody>
             </table>
