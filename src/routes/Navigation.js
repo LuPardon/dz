@@ -9,7 +9,10 @@ export default function Navigation(props) {
     const navigate = useNavigate();
 
     const handleOdjava = () => {
-     props.postaviPrijavu();
+      props.postaviPrijavu();
+
+      localStorage.clear();
+
       navigate('/');
     };
   
@@ -66,9 +69,11 @@ export default function Navigation(props) {
         </ul>
 
         {!prijavljen ? (
+         <> <h6>{localStorage.getItem("imeKorisnika") || "N/A"}</h6>
+         <span>&nbsp;&nbsp;&nbsp;</span>
         <button className="btn btn-danger" onClick={handleOdjava}>
         Odjava
-      </button>) : (
+      </button></>) : (
       <Link className="btn btn-primary" to="/prijava">
                 Prijava
               </Link>

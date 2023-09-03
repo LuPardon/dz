@@ -15,7 +15,19 @@
 .sve{
   background-color: rgb(235, 177, 177);
   background: rgb(222, 188, 188);
+  text-align: center;
 }
+
+form {
+  text-align: left;
+  width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  background-color: white;
+  display: inline-block;
+}
+
 .App-header {
   background-color: #3e5fa1;
   min-height: 100vh;

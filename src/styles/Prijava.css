@@ -1,5 +1,5 @@
 /* Container for the login form */
-.prijava-container {
+/* .prijava-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,19 +8,19 @@
 
 .prijava-container div {
     background: rgb(222, 188, 188);
-    /* display: flex;
+    display: flex;
     justify-content: center;
-    align-items: center; */
-}
+    align-items: center; 
+} */
 
 /* Styling for the form */
-form {
+/* form {
     width: 400px;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     background-color: white;
-}
+} */
 
 /* Styling for the form header */
 h2 {

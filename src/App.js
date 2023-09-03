@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import './styles/App.css';
@@ -17,6 +17,13 @@ import DetaljiDomZdravlja from './routes/DetaljiDomZdravlja';
 import OrdinacijePoGradu from './routes/OrdinacijePoGradu';
 
 function App() {
+
+  useEffect(() => {
+    const isPrijavljen = localStorage.getItem('prijavljen');
+    if (isPrijavljen === 'true') {
+      setPrijavljen(true);
+    }
+  }, []);
 
   const posPrijavu = async () => {
     setPrijavljen(!prijavljen)
@@ -39,9 +46,16 @@ function App() {
         console.log(response.data)
         if (response.data.success) {
           setPrijavljen(true);
-          poruka = 'Uspijeh';
+          localStorage.setItem('prijavljen', 'true');
+          localStorage.setItem('idKorisnika', response.data.prijava_podaci.id_korisnika);
+          localStorage.setItem('korisnickoIme', korisnickoIme);
+          localStorage.setItem('tipKorisnika', response.data.osoba_podaci.tip);
+          localStorage.setItem('imeKorisnika', response.data.osoba_podaci.ime);
+          poruka = 'Uspjeh';
         } else {
           poruka = 'Greška';
+          alert('Netocni podaci za prijavu, molimo pokusajte ponovno.');
+          localStorage.clear();
         }
       });
       console.log(prijavljen);
