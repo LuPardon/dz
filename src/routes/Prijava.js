@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../../node_modules/bootstrap/dist/js/bootstrap.min.js';
-
-
+import "../styles/Prijava.css";
 
 export default function Prijava() {
   const [korisnickoIme, setKorisnickoIme] = useState('');
@@ -38,8 +37,8 @@ export default function Prijava() {
   };
 
   return (
-    <div>
-      {prijavljen ? (
+    <div className="prijava-container">
+    {prijavljen ? (
         <div>
           <h2>Prijavljeni ste!</h2>
           <button onClick={handleOdjava}>Odjava</button>
@@ -47,7 +46,7 @@ export default function Prijava() {
       ) : (
         <form onSubmit={handlePrijava}>
           <h2>Prijava</h2>
-          <div>
+          <div className='form_input'>
             <label htmlFor="korisnickoIme">Korisničko ime:</label>
             <input
               type="text"
@@ -56,7 +55,7 @@ export default function Prijava() {
               onChange={(e) => setKorisnickoIme(e.target.value)}
             />
           </div>
-          <div>
+          <div className='form_input'>
             <label htmlFor="lozinka">Lozinka:</label>
             <input
               type="password"

@@ -42,6 +42,7 @@ export default function DZTablica() {
     });
 
     const tableRows = filteredData.map((group, index) => {
+        if (domovi.length== 0) return;
         const cityDomovi = domovi.filter(dom => dom.grad ===group.city);
         return ( 
             <Fragment  key={group.city}>
@@ -67,7 +68,7 @@ export default function DZTablica() {
                         //     >
                         //         {dom.naziv}
                         //     </button>
-                            <Link className="domovi-button" to={`/dom_zdravlja/detalji/${dom.id_domzdravlja}`}>  {dom.naziv}</Link>
+                            <Link  key={dom.id_domzdravlja} className="domovi-button" to={`/dom_zdravlja/detalji/${dom.id_domzdravlja}`}>  {dom.naziv}</Link>
                             
                         ))}
                     </td>
@@ -116,7 +117,7 @@ export default function DZTablica() {
                         <th>BROJ ZAPOSLENIKA </th>
                     </tr>
                 </thead>
-                <tbody>{tableRows}</tbody>
+                <tbody id='clickable_table'>{tableRows}</tbody>
             </table>
         </>
     );

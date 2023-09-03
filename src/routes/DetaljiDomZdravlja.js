@@ -7,6 +7,8 @@ export default function DetaljiDomZdravlja() {
     const [data, setData] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const { domId } = useParams(); // Assuming the URL parameter is named 'domId'
+    const domZdravlja = data.find(dom => dom.id_domzdravlja.toString()=== domId);
+    const domZdravljaNaziv = domZdravlja ? domZdravlja.naziv :"Loading...";
 
     useEffect(() => {
         fetchData();
@@ -16,9 +18,14 @@ export default function DetaljiDomZdravlja() {
         try {
             const response = await axios.get("http://localhost/KV/dzdb/domovi.php");
             setData(response.data);
+            PostaviDomZdravlja();
         } catch (error) {
             console.error("Error fetching data:", error);
         }
+    }
+
+    function PostaviDomZdravlja() {
+       
     }
 
     function PostaviRetke() {
@@ -77,7 +84,7 @@ export default function DetaljiDomZdravlja() {
 
     return (
         <>
-            <h2>{domId}</h2> {/* Display the Dom zdravlja ID or name */}
+            <h2>{domZdravljaNaziv}</h2> {/* Display the Dom zdravlja ID or name */}
             <input
                 type="text"
                 id="myInput"

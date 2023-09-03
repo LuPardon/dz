@@ -53,6 +53,9 @@ export default function Navigation(props) {
             Djelatnosti po gradovima
           </Link>
         </li>
+        <li className="nav-item">
+          <Link className="nav-link" aria-current="page" to="/ordinacije" >Ordinacije po gradovima</Link>
+        </li>
 
         <li className="nav-item">
           <Link className="nav-link" aria-current="page" to="/stat" >Statistika djelatnosti</Link>
