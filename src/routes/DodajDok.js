@@ -1,9 +1,22 @@
 import axios from 'axios';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 
 export default function DodajDoktoraSestru() {
+    const [ordinacije, setOrdinacije] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost/KV/dzdb/ordinacija.php')
+            .then(response => {
+                // console.log(`ORDINACIJE ===> `, JSON.stringify(response, null, 2));
+                setOrdinacije(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
+
     const imeRef = useRef('');
     const prezimeRef = useRef('');
     const spolRef = useRef('');
@@ -59,8 +72,15 @@ export default function DodajDoktoraSestru() {
             <h2>Dodaj doktora/sestru</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="ordinacija" className="form-label">Broj Ordinacije:</label>
-                    <input type="text" className="form-control form-control-sm" id="ordinacija" ref={ordRef} />
+                    <label htmlFor="ordinacija" className="form-label">Ordinacija:</label>
+                    {/* <input type="text" className="form-control form-control-sm" id="ordinacija" ref={ordRef} /> */}
+                    <select className="form-select form-select-sm" id="ordinacija" ref={ordRef}>
+                        {ordinacije.map((ord, index) => (
+                            <option key={index} value={ord.id_ordinacija}>
+                                {ord.naziv} - {ord.dom_zdravlja.naziv} {/* Replace id_domzdravlja with the actual name when you fetch it */}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="mb-3">

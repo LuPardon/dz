@@ -43,7 +43,7 @@ function App() {
         korisnickoIme,
         lozinka,
       }).then((response) => {
-        console.log(response.data)
+        console.log(`PRIJAVA ===> `, JSON.stringify(response, null, 2));
         if (response.data.success) {
           setPrijavljen(true);
           localStorage.setItem('prijavljen', 'true');

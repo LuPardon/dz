@@ -42,8 +42,8 @@ export default function DZTablica() {
     });
 
     const tableRows = filteredData.map((group, index) => {
-        if (domovi.length== 0) return;
-        const cityDomovi = domovi.filter(dom => dom.grad ===group.city);
+        if (domovi.length === 0) return;
+        const cityDomovi = domovi.filter(dom => dom.grad == group.city);
         return ( 
             <Fragment  key={group.city}>
                 <tr onClick={() => {
