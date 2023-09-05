@@ -54,7 +54,7 @@ function App() {
           poruka = 'Uspjeh';
         } else {
           poruka = 'Greška';
-          alert('Netocni podaci za prijavu, molimo pokusajte ponovno.');
+          alert('Netočni podaci za prijavu, molimo pokušajte ponovno.');
           localStorage.clear();
         }
       });

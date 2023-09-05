@@ -1,10 +1,13 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import CustomConfirmDialog from '../modals/CustomConfirmModal.js'
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 export default function ZAPTablica() {
     const [data, setData] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [osobaToDelete, setOsobaToDelete] = useState(null);
 
     useEffect(() => {
         getData();
@@ -37,11 +40,42 @@ export default function ZAPTablica() {
     const tableRows = filteredData.map((osoba) => (
         <tr key={counter++}>
             <td>{counter}</td>
-            <td>{osoba.ime} {osoba.prezime}</td>
+            <td>
+                {osoba.ime} {osoba.prezime}
+            </td>
             <td>{osoba.tip}</td>
             <td>{osoba.grad}</td>
+            <td>
+                <button className="btn btn-danger" onClick={() => promptDeleteZaposlenik(osoba)}>Obriši zaposlenika</button>
+            </td>
         </tr>
     ));
+
+    function promptDeleteZaposlenik(osoba) {
+        setOsobaToDelete(osoba);
+        setShowConfirmDialog(true);
+    }
+
+    function confirmDelete() {
+        setShowConfirmDialog(false);
+        obrisiZaposlenika()
+    }
+
+    function cancelDelete() {
+        setShowConfirmDialog(false);
+    }
+
+    function obrisiZaposlenika() {
+        axios.delete(`http://localhost/KV/dzdb/deleteZaposlenik.php?id=${osobaToDelete.id}`)
+            .then(response => {
+                console.log(`delete response ===> ${response.data}`);
+                // Refresh the data after delete
+                getData();
+            })
+            .catch(error => {
+                console.error('Error deleting zaposlenik:', error);
+            });
+    }
 
     // Renderiranje tablice s filtriranim podacima
     function handleSearch(event) {
@@ -50,6 +84,13 @@ export default function ZAPTablica() {
 
     return (
         <>
+            {showConfirmDialog && (
+                <CustomConfirmDialog
+                    message={`Jeste li sigurni da želite obrisati zaposlenika ${osobaToDelete.ime} ${osobaToDelete.prezime}?`}
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
+            )}
             {/* Tražilica */}
             <input
                 type="text"
@@ -67,6 +108,7 @@ export default function ZAPTablica() {
                         <th>IME I PREZIME</th>
                         <th>TIP</th>
                         <th>GRAD</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>{tableRows}</tbody>
