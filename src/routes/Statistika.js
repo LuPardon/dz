@@ -66,7 +66,7 @@ export default function Statistika() {
 
   return (
     <>
-      {/* Tražilica */}
+      <h2>Statistika djelatnosti</h2>
       <input
         type="text"
         id="myInput"

@@ -18,11 +18,25 @@ import OrdinacijePoGradu from './routes/OrdinacijePoGradu';
 
 function App() {
 
+  const [gradovi, setGradovi] = useState([]);
+
+    const fetchGradovi = async () => {
+        try {
+            const response = await axios.get("http://localhost/KV/dzdb/domovi.php");
+            const gradoviSet = [...new Set(response.data.map(item => item.grad))];
+            setGradovi(gradoviSet);
+        } catch (error) {
+            console.error("Error fetching cities:", error);
+        }
+    };
+
   useEffect(() => {
     const isPrijavljen = localStorage.getItem('prijavljen');
     if (isPrijavljen === 'true') {
       setPrijavljen(true);
     }
+
+    fetchGradovi();
   }, []);
 
   const posPrijavu = async () => {
@@ -89,10 +103,10 @@ function App() {
     }
     {prijavljen &&
       <BrowserRouter>
-        <Navigation postaviPrijavu={posPrijavu} />
+        <Navigation gradovi={gradovi} postaviPrijavu={posPrijavu}/>
         <Routes>
           <Route path='/zaposlenici' element={<ZAPTablica />} />
-          <Route path='/' element={<DZTablica />} />
+          <Route path='/' element={<DZTablica fetchGradovi={fetchGradovi}/>} />
           <Route path='/dodaj' element={<DodajDoktoraSestru />} />
           <Route path='/stat' element={<Statistika />} />
           <Route path='/djelatnosti' element={<DpGTablica />}></Route>

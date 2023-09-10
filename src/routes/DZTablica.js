@@ -1,37 +1,59 @@
 import axios from 'axios';
 import { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import AddDomZdravljaModal from '../modals/AddDomZdravljaModal';
 import "../styles/dz_tablica.css";
-// import { Accordion, Card, Button } from 'react-bootstrap';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
-export default function DZTablica() {
-    const [data, setData] = useState(null);
+export default function DZTablica({fetchGradovi}) {
     const [domovi, setDomovi] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
 
+    const [isDomModalOpen, setIsDomModalOpen] = useState(false);
+
+    const openDomModal = () => {
+        setIsDomModalOpen(true);
+    };
+
+    const closeDomModal = () => {
+        setIsDomModalOpen(false);
+    };
+
+    const handleDomConfirm = async (formData) => {
+        console.log('Form data:', formData);
+        try {
+            const response = await axios.post("http://localhost/KV/dzdb/add_dom_zdravlja.php", formData);
+            
+            if(response.data.error) {
+                alert(response.data.message);
+            } else {
+                closeDomModal();
+                alert(response.data.message);
+                
+                getDomovi();
+                fetchGradovi();
+            }
+        } catch (error) {
+            console.error("Error adding Dom zdravlja:", error);
+            alert("Pogreška pri dodavanju doma zdravlja. Molimo pokušajte ponovno.");
+        }
+    };
+
     useEffect(() => {
-        getData();
         getDomovi();
     }, []);
-    
+
     async function getDomovi() {
         axios.get("http://localhost/KV/dzdb/domovi.php").then((response) => {
             setDomovi(response.data);
         });
     }
 
-    async function getData() {
-        axios.get("http://localhost/KV/dzdb/domovi.php").then((response) => {
-            setData(response.data);
-        });
-    }
-
-    if (!data) return null;
+    if (!domovi) return null;
 
     let counter = 1;
 
-    const groupedData = groupDataByCity(data);
+    const groupedData = groupDataByCity(domovi);
 
     const filteredData = groupedData.filter((group) => {
         const searchValue = searchQuery.toUpperCase();
@@ -41,11 +63,11 @@ export default function DZTablica() {
         );
     });
 
-    const tableRows = filteredData.map((group, index) => {
+    const tableRows = filteredData.sort((a, b) => a.city.localeCompare(b.city)).map((group, index) => {
         if (domovi.length === 0) return;
         const cityDomovi = domovi.filter(dom => dom.grad == group.city);
-        return ( 
-            <Fragment  key={group.city}>
+        return (
+            <Fragment key={group.city}>
                 <tr onClick={() => {
                     const element = document.getElementById(`collapse-${index}`);
                     if (element) {
@@ -57,26 +79,21 @@ export default function DZTablica() {
                     <td>
                         {group.totalEmployees}
                     </td>
+                    {/* <td> */}
+                        {/* <button className="btn btn-primary" onClick={openDomModal}>+</button> */}
+                    {/* </td> */}
                 </tr>
                 <tr id={`collapse-${index}`} className="collapse">
                     <td colSpan="3">
                         {cityDomovi.map(dom => (
-                        //    <button 
-                        //         key={dom.id_domzdravlja} 
-                        //         onClick={() => console.log(dom.naziv)}
-                        //         className="domovi-button"
-                        //     >
-                        //         {dom.naziv}
-                        //     </button>
-                            <Link  key={dom.id_domzdravlja} className="domovi-button" to={`/dom_zdravlja/detalji/${dom.id_domzdravlja}`}>  {dom.naziv}</Link>
-                            
+                            <Link key={dom.id_domzdravlja} className="domovi-button" to={`/dom_zdravlja/detalji/${dom.id_domzdravlja}`}>  {dom.naziv}</Link>
                         ))}
                     </td>
                 </tr>
             </Fragment>
         );
     });
-    
+
 
     function groupDataByCity(data) {
         const groupedData = {};
@@ -94,12 +111,12 @@ export default function DZTablica() {
     }
 
     function handleSearch(event) {
-        setSearchQuery(event.target.value.toUpperCase());
+        setSearchQuery(event.target.value);
     }
 
     return (
         <>
-            {/* Search Input */}
+            <h2>Svi domovi zdravlja</h2>
             <input
                 type="text"
                 id="myInput"
@@ -107,8 +124,6 @@ export default function DZTablica() {
                 value={searchQuery}
                 placeholder="Pretraži..."
             />
-
-            {/* Table */}
             <table className='table table-active'>
                 <thead>
                     <tr>
@@ -119,6 +134,13 @@ export default function DZTablica() {
                 </thead>
                 <tbody id='clickable_table'>{tableRows}</tbody>
             </table>
+            <button id="add_dom_zdravlja" className="btn btn-dark" onClick={openDomModal}>+</button>
+            {isDomModalOpen && (
+                <AddDomZdravljaModal
+                    onConfirm={handleDomConfirm}
+                    onCancel={closeDomModal}
+                />
+            )}
         </>
     );
 }

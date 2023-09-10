@@ -56,7 +56,7 @@ export default function DetaljiDomZdravlja() {
     }
 
     function handleSearch(event) {
-        setSearchQuery(event.target.value.toUpperCase());
+        setSearchQuery(event.target.value);
     }
 
     const filteredRows = PostaviRetke().filter((item) => {

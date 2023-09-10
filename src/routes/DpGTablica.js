@@ -57,6 +57,7 @@ export default function DpGTablica() {
 
   return (
     <div>
+      <h2>Djelatnosti po gradovima</h2>
       <input
         type="text"
         id="myInput"

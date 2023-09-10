@@ -1,15 +1,46 @@
 import axios from "axios";
 import { useState, useEffect, Fragment } from 'react';
+import AddOrdinacijaModal from '../modals/AddOrdinacijaModal.js';
+import '../styles/ordinacije_po_gradu.css';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 export default function OrdinacijePoGradu() {
-    const [data, setData] = useState([]);
+    const [ordinacijeData, setOrdinacijeData] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [domoviData, setDomoviData] = useState([]);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCity, setSelectedCity] = useState(null);
+
+    const openModal = (cityName) => {
+        setSelectedCity(cityName);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleConfirm = async (formData) => {
+        console.log('Form data:', formData);
+        try {
+            const response = await axios.post("http://localhost/KV/dzdb/add_ordinacija.php", formData);
+            if(response.data.message) {
+                alert(response.data.message);
+            } else {
+                closeModal();
+                alert("Ordinacija uspješno dodana!");
+                fetchOrdinacijeData();
+            }
+        } catch (error) {
+            console.error("Error adding ordinacija:", error);
+            alert("Pogreška pri dodavanju ordinacije. Molimo pokušajte ponovno.");
+        }
+    };
+
     useEffect(() => {
         fetchDomoviData();
-        fetchData();
+        fetchOrdinacijeData();
     }, []);
 
     async function fetchDomoviData() {
@@ -21,10 +52,10 @@ export default function OrdinacijePoGradu() {
         }
     }
 
-    async function fetchData() {
+    async function fetchOrdinacijeData() {
         try {
             const response = await axios.get("http://localhost/KV/dzdb/ordinacija.php");
-            setData(response.data);
+            setOrdinacijeData(response.data);
             console.log(response);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -33,15 +64,32 @@ export default function OrdinacijePoGradu() {
 
     function groupByCity() {
         const grouped = {};
-        data.forEach(ordinacija => {
-            const domZdravlja = domoviData.find(dom => dom.id_domzdravlja === ordinacija.id_domzdravlja);
-            const grad = domZdravlja ? domZdravlja.grad : "Unknown"; // Default to "Unknown" if not found
-
-            if (!grouped[grad]) {
-                grouped[grad] = [];
-            }
-            grouped[grad].push(ordinacija);
+    
+        const allCities = [...new Set(domoviData.map(dom => dom.grad))];
+    
+        allCities.forEach(city => {
+            grouped[city] = ordinacijeData.filter(ordinacija => {
+                const domZdravlja = domoviData.find(dom => dom.id_domzdravlja === ordinacija.id_domzdravlja);
+                return domZdravlja && domZdravlja.grad === city;
+            });
         });
+    
+        for (const city in grouped) {
+            grouped[city] = grouped[city].filter(ordinacija => {
+                const domZdravlja = domoviData.find(dom => dom.id_domzdravlja === ordinacija.id_domzdravlja);
+                const grad = domZdravlja ? domZdravlja.grad : "Nedostupno";
+                return grad.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.naziv.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.opis.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.adresa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.djelatnost.naziv.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.broj_telefona.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.mail_adresa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.radno_vrijeme.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       ordinacija.napomena.toLowerCase().includes(searchQuery.toLowerCase());
+            });
+        }
+    
         return grouped;
     }
 
@@ -55,7 +103,13 @@ export default function OrdinacijePoGradu() {
                     element.classList.toggle('show');
                 }
             }}>
-                <td>{city}</td>
+                <td id="ordinacija_grad"><span>{city}</span><button id="add_ordinacija" className="btn btn-dark" 
+                onClick={(e) => {
+                    e.stopPropagation();
+                    openModal(city);
+                    console.log('CLICKED ADD BUTTON');
+                }}>+</button></td>
+
             </tr>
             <tr id={`collapse-${index}`} className="collapse">
                 <td>
@@ -113,7 +167,7 @@ export default function OrdinacijePoGradu() {
     ));
 
     function handleSearch(event) {
-        setSearchQuery(event.target.value.toUpperCase());
+        setSearchQuery(event.target.value);
     }
 
     return (
@@ -134,6 +188,12 @@ export default function OrdinacijePoGradu() {
                 </thead>
                 <tbody>{tableRows}</tbody>
             </table>
+            {isModalOpen && (
+                <AddOrdinacijaModal 
+                    city={selectedCity}
+                    onConfirm={handleConfirm} 
+                    onCancel={closeModal} 
+                />)}
         </>
     );
 }

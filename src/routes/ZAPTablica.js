@@ -91,7 +91,7 @@ export default function ZAPTablica() {
                     onCancel={cancelDelete}
                 />
             )}
-            {/* Tražilica */}
+            <h2>Svi zaposlenici</h2>
             <input
                 type="text"
                 id="myInput"

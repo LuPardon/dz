@@ -18,6 +18,16 @@
   text-align: center;
 }
 
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: black!important;
+}
+
+#myInput{
+  text-transform: none!important;
+}
+
 form {
   text-align: left;
   width: 400px;
@@ -35,7 +45,7 @@ form {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  /* font-size: calc(10px + 2vmin); */
   color: rgb(131, 170, 244);
 }
 
@@ -50,4 +60,29 @@ form {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* General styles for the table */
+.table {
+  width: 90%!important;
+  margin: 30px auto!important;
+  border-radius: 10px!important;
+  border-collapse: collapse!important;
+  overflow: hidden!important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15)!important;
+}
+
+.table th, .table td {
+  padding: 12px 15px!important;
+  text-align: left!important;
+}
+
+.table th {
+  background-color: lightcoral!important;
+  color: white!important;
+  font-weight: bold!important;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color:red!important;
 }

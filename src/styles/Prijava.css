@@ -1,40 +1,6 @@
-/* Container for the login form */
-/* .prijava-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.prijava-container div {
-    background: rgb(222, 188, 188);
-    display: flex;
-    justify-content: center;
-    align-items: center; 
-} */
-
-/* Styling for the form */
-/* form {
-    width: 400px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    background-color: white;
-} */
-
-/* Styling for the form header */
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #d282cb;
-    /* Pink color to match the theme */
-}
-
-/* Styling for the form fields */
 form div {
     margin-bottom: 15px;
-    background: white
-
+    background: white;
 }
 
 label {
